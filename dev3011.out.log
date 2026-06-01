@@ -1,0 +1,12 @@
+
+> imaposlame-next@1.0.0 dev
+> next dev -p 3011
+
+   ▲ Next.js 15.5.18
+   - Local:        http://localhost:3011
+   - Network:      http://192.168.100.9:3011
+   - Experiments (use with caution):
+     · staleTimes
+
+ ✓ Starting...
+ ✓ Ready in 2.2s
