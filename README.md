@@ -3,7 +3,7 @@
 Ovo je jedini produkcioni folder za sajt. Next.js aplikacija, Supabase SQL, backend plan, staticki prototip i asseti su spakovani ovdje da deploy i dalji rad idu iz jednog mjesta.
 
 ## Sta je prebaceno
- 
+
 - Prave Next rute bez `#/` adresa.
 - Javni dio: pocetna, oglasi, detalj oglasa, gradovi, kategorije, firme, za firme, pravne stranice.
 - Auth: prijava i registracija preko Supabase-a.
