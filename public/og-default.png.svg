@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#0D1B2A"/>
+  <rect x="60" y="60" width="1080" height="510" rx="32" fill="#1a1f2e" stroke="#252b3a" stroke-width="2"/>
+  <!-- Logo mark -->
+  <rect x="110" y="110" width="72" height="72" rx="18" fill="#FF202B"/>
+  <text x="146" y="160" font-family="system-ui, sans-serif" font-size="32" font-weight="900" fill="#0D1B2A" text-anchor="middle">ip</text>
+  <!-- Brand name -->
+  <text x="200" y="162" font-family="system-ui, sans-serif" font-size="28" font-weight="700" fill="#e8eef5">imaposla.me</text>
+  <!-- Tagline -->
+  <text x="110" y="290" font-family="system-ui, sans-serif" font-size="64" font-weight="900" fill="#ffffff">Poslovi u</text>
+  <text x="110" y="370" font-family="system-ui, sans-serif" font-size="64" font-weight="900" fill="#FF202B">Crnoj Gori</text>
+  <!-- Sub -->
+  <text x="110" y="440" font-family="system-ui, sans-serif" font-size="28" fill="#9aa5b8">Oglasi za posao, kandidati i poslodavci na jednom mjestu.</text>
+  <!-- URL -->
+  <text x="110" y="530" font-family="system-ui, sans-serif" font-size="22" fill="#6b7588">https://imaposla.me</text>
+</svg>
