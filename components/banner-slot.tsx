@@ -83,20 +83,10 @@ export async function BannerSlot({
         href={mock.targetUrl}
         target="_blank"
         rel="noopener noreferrer sponsored"
-        className="ad-banner-link"
+        className="ad-banner-link ad-banner-mock-art"
         tabIndex={-1}
         aria-hidden="true"
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={mock.imageUrl}
-          alt="Oglasni prostor"
-          className="ad-banner-img"
-          loading="lazy"
-          width={mock.width}
-          height={mock.height}
-        />
-      </a>
+      />
       <div className="ad-placeholder-label">
         <span className="ad-placeholder-text">Vaš banner ovdje</span>
         <span className="ad-placeholder-dim">{mock.label}</span>

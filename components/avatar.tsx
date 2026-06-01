@@ -22,9 +22,11 @@ export function Avatar({
   const fallbackText = initials(fallback) || "?";
   const showFallback = !url || imgError;
 
+  const fallbackClass = showFallback ? ` avatar-image--fallback avatar-image--${bucket === "worker-photos" ? "person" : "company"}` : "";
+
   return (
     <div
-      className="avatar-image"
+      className={`avatar-image${fallbackClass}`}
       style={{ width: dim, height: dim, borderRadius: radius, fontSize: Math.round(size * 0.36) }}
       aria-label={fallback}
     >
