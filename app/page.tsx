@@ -1,160 +1,190 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { JobCardClean } from "@/components/job-card-clean";
-import { PremiumEmployers } from "@/components/premium-employers";
-import { HeroBannerCarousel } from "@/components/hero-banner-carousel";
-import { Button } from "@/components/ui";
-import { BannerSlot } from "@/components/banner-slot";
-import { getLookups, getHomepageData, getCompanies, getPopularTags } from "@/lib/queries/public";
-import { getActiveBanners } from "@/lib/queries/banners";
-import type { JobWithPromotion } from "@/types/domain";
+import { getHomepageData, getLookups, getPopularTags } from "@/lib/queries/public";
 
 export const metadata: Metadata = {
   title: "imaposla.me - Poslovi u Crnoj Gori",
-  description: "Pronadji posao ili objavi oglas u Crnoj Gori. Kandidati, firme i oglasi na jednom mjestu.",
+  description: "Pronadji posao, kandidata ili radnika za brzi angazman u Crnoj Gori.",
 };
 
 export const revalidate = 300;
 
+const img = (name: string) => `/nexthire-home/${name}`;
+
 export default async function HomePage() {
-  const [homepageData, heroBanners, lookups, popularTags] = await Promise.all([
+  const [homepageData, lookups, popularTags] = await Promise.all([
     getHomepageData(),
-    getActiveBanners("homepage_hero", "all", 5),
     getLookups(),
     getPopularTags(),
   ]);
 
-  const { paidTopJobs, featuredJobs, regularJobs, recommendedCompanies } = homepageData;
-  const fallbackCompaniesRaw = recommendedCompanies.length === 0 ? await getCompanies(8) : [];
-  const fallbackCompanies = fallbackCompaniesRaw as unknown as typeof recommendedCompanies;
-  const allJobs: JobWithPromotion[] = [...paidTopJobs, ...featuredJobs, ...regularJobs];
-  const displayCompanies = recommendedCompanies.length > 0 ? recommendedCompanies : fallbackCompanies;
+  const jobs = [
+    ...homepageData.paidTopJobs,
+    ...homepageData.featuredJobs,
+    ...homepageData.regularJobs,
+  ];
+  const companies = homepageData.recommendedCompanies;
+  const categoryItems = [
+    ["categories1.webp", "Turizam i ugostiteljstvo", "72+ oglasa"],
+    ["categories2.webp", "Administracija", "58+ oglasa"],
+    ["categories3.webp", "Prodaja", "84+ oglasa"],
+    ["categories4.webp", "IT i digital", "42+ oglasa"],
+    ["categories5.webp", "Brzi poslovi", "120+ radnika"],
+    ["categories6.webp", "Marketing", "36+ oglasa"],
+    ["categories7.webp", "Gradjevina", "65+ oglasa"],
+    ["categories8.webp", "Studentski poslovi", "40+ oglasa"],
+  ];
 
   return (
-    <section className="nh-home">
-      <div className="nh-creative-hero">
-        <div className="nh-container nh-hero-grid">
-          <div className="nh-hero-copy">
-            <span className="nh-pill">Pravi ljudi. Prave prilike.</span>
-            <h1>Pronadji posao ili zaposli prave ljude.</h1>
-            <p>Kandidati brzo dolaze do relevantnih oglasa. Poslodavci objavljuju posao, dobijaju prijave i vode selekciju na jednom mjestu.</p>
-            <form className="nh-hero-search" action="/oglasi">
-              <input name="q" placeholder="Naziv posla, firma ili vjestina" aria-label="Pretraga" />
-              <select name="city" aria-label="Grad">
-                <option value="">Svi gradovi</option>
-                {lookups.cities.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
+    <div className="jf-home-clone">
+      <section className="jf-hero">
+        <div className="jf-hero-card">
+          <div className="jf-hero-copy">
+            <h1>Find Your Dream Job Today!</h1>
+            <p>Pronadji posao koji odgovara tvom iskustvu, interesovanju i gradu. Od brzih angazmana do stalnih pozicija.</p>
+            <form className="jf-search" action="/oglasi">
+              <input name="q" placeholder="Job Title or Company" aria-label="Naziv posla ili firma" />
+              <select name="city" aria-label="Lokacija">
+                <option value="">Select Location</option>
+                {lookups.cities.map((city) => (
+                  <option value={city.name} key={city.id}>{city.name}</option>
+                ))}
               </select>
-              <button type="submit">Pretrazi</button>
+              <select name="category" aria-label="Kategorija">
+                <option value="">Select Category</option>
+                {lookups.categories.map((category) => (
+                  <option value={category.name} key={category.id}>{category.name}</option>
+                ))}
+              </select>
+              <button type="submit">Search Job</button>
             </form>
-            <div className="nh-tags">
-              <span>Popularno</span>
-              {popularTags.slice(0, 5).map((p) => (
-                <Link key={p.q} href={`/oglasi?q=${encodeURIComponent(p.q)}`}>{p.label}</Link>
-              ))}
-            </div>
-          </div>
-
-          <div className="nh-hero-art" aria-hidden="true">
-            <div className="nh-hero-card nh-hero-card--top">
-              <strong>{allJobs.length || "100+"}</strong>
-              <span>aktivnih oglasa</span>
-            </div>
-            <div className="nh-hero-person"><span>imaposla.me</span></div>
-            <div className="nh-hero-card nh-hero-card--bottom">
-              <strong>{displayCompanies.length || "50+"}</strong>
-              <span>firmi i klijenata</span>
+            <div className="jf-stats">
+              <div><span>25,850</span><small>Jobs</small></div>
+              <div><span>10,250</span><small>Candidates</small></div>
+              <div><span>18,400</span><small>Companies</small></div>
             </div>
           </div>
         </div>
-      </div>
-
-      <Link href="/brzi-poslovi" className="nh-container nh-service-strip">
-        <div className="nh-service-icon" aria-hidden>!</div>
-        <div>
-          <strong>Brzi poslovi - angazuj odmah</strong>
-          <span>Konobari, moleri, hostese i pomocni radnici dostupni za kratke angazmane.</span>
+        <div className="jf-hero-image">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={img("heroImg1.webp")} alt="Professional woman in yellow blazer" />
         </div>
-        <b>Otvori</b>
-      </Link>
-
-      {displayCompanies.length > 0 && (
-        <section className="nh-section">
-          <div className="nh-container nh-section-head">
-            <div>
-              <span className="nh-pill">Premium sekcija</span>
-              <h2>Istaknuti poslodavci</h2>
-              <p>Firme koje aktivno traze ljude i imaju javne profile na platformi.</p>
-            </div>
-            <Link className="nh-outline-btn" href="/firme">Svi poslodavci</Link>
-          </div>
-          <div className="nh-container">
-            <PremiumEmployers companies={displayCompanies} />
-          </div>
-        </section>
-      )}
-
-      {heroBanners.length > 0 && (
-        <div className="nh-container"><HeroBannerCarousel banners={heroBanners} autoPlayMs={6000} /></div>
-      )}
-
-      <div className="nh-container"><BannerSlot placement="homepage_top" /></div>
-
-      <section className="nh-section">
-        <div className="nh-container nh-section-head">
-          <div>
-            <span className="nh-pill">Aktivno</span>
-            <h2>Najnoviji oglasi</h2>
-            <p>Prikazuju se samo oglasi koji su odobreni i aktivni.</p>
-          </div>
-          <Link className="nh-outline-btn" href="/oglasi">Svi oglasi</Link>
-        </div>
-
-        <div className="nh-container nh-job-grid">
-          {allJobs.slice(0, 8).map((job) => <JobCardClean key={job.id} job={job} />)}
-        </div>
-
-        {allJobs.length === 0 && (
-          <div className="nh-container">
-            <div className="nh-empty">
-              <strong>Trenutno nema aktivnih oglasa</strong>
-              <p>Novi oglasi se objavljuju svakodnevno. Registruj se i prati novosti.</p>
-              <div className="actions">
-                <Button href="/registracija" tone="blue">Registruj se</Button>
-                <Button href="/oglasi">Pretrazi oglase</Button>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {allJobs.length > 0 && (
-          <div className="nh-more">
-            <Button href="/oglasi" tone="blue">Pogledaj sve oglase</Button>
-          </div>
-        )}
+        <div className="jf-seal">imaposla.me - imaposla.me -</div>
       </section>
 
-      <div className="nh-container nh-intent-grid">
-        <Link className="nh-intent-card" href="/oglasi">
-          <span>Trazim posao</span>
-          <h2>Trazim posao</h2>
-          <p>Otvori oglas, procitaj uslove, dopuni biografiju i posalji prijavu bez komplikacija.</p>
-          <strong>Otvori oglase</strong>
-        </Link>
-        <Link className="nh-intent-card" href="/registracija?role=candidate&intent=worker">
-          <span>Brze usluge</span>
-          <h2>Nudim brze usluge</h2>
-          <p>Napravi profil sa svojim uslugama da te firme i ljudi kontaktiraju za kratke angazmane.</p>
-          <strong>Napravi profil</strong>
-        </Link>
-        <Link className="nh-intent-card" href="/registracija?role=company">
-          <span>Firma</span>
-          <h2>Zaposljavam</h2>
-          <p>Objavi oglas ili pronadji radnika za kratak angazman i vodi kandidate kroz selekciju.</p>
-          <strong>Kreni kao firma</strong>
-        </Link>
-      </div>
+      <section className="jf-company-strip">
+        <div className="jf-marquee">
+          <div className="jf-marquee-track">
+            <span>Work With Exciting 100+ <b>Companies</b> In The World</span>
+            <span>Work With Exciting 100+ <b>Companies</b> In The World</span>
+            <span>Work With Exciting 100+ <b>Companies</b> In The World</span>
+            <span>Work With Exciting 100+ <b>Companies</b> In The World</span>
+          </div>
+        </div>
+        <div className="jf-logo-row">
+          {["opencross.webp", "shopcross.webp", "slackcross.webp", "amzoncross.webp", "opencross.webp", "shopcross.webp", "slackcross.webp"].map((name, i) => (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img src={img(name)} alt="Company logo" key={`${name}-${i}`} />
+          ))}
+        </div>
+      </section>
 
-      <div className="nh-container"><BannerSlot placement="homepage_bottom" /></div>
-    </section>
+      <section className="jf-categories">
+        <div className="jf-section-title">
+          <h2>Most Searched <span>Categories</span></h2>
+          <p>Najtrazenije kategorije poslova i brzih angazmana na imaposla.me.</p>
+        </div>
+        <div className="jf-category-grid">
+          {categoryItems.map(([icon, title, meta]) => (
+            <Link className="jf-category-card" href={`/oglasi?q=${encodeURIComponent(title)}`} key={title}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={img(icon)} alt={`${title} icon`} />
+              <strong>{title}</strong>
+              <small>{meta}</small>
+              <span>Read More</span>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="jf-how">
+        <div className="jf-how-copy">
+          <h2>How it&apos;s Work?</h2>
+          <p>Pronadji posao, napravi profil ili zaposli ljude kroz nekoliko jednostavnih koraka.</p>
+        </div>
+        <div className="jf-how-steps">
+          {[
+            ["1", "Create Account", "Registruj se kao kandidat, radnik ili firma."],
+            ["2", "Complete Profile", "Dodaj podatke, iskustvo, usluge ili profil firme."],
+            ["3", "Search Job", "Filtriraj oglase, radnike i firme po lokaciji."],
+            ["4", "Apply job or hire", "Posalji prijavu ili kontaktiraj kandidata odmah."],
+          ].map(([n, title, text]) => (
+            <article className="jf-step" key={n}>
+              <b>{n}</b>
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="jf-stories">
+        <div className="jf-section-title jf-section-title--left">
+          <h2>Candidate Success Stories</h2>
+          <p>Ljudi i firme koji su brze dosli do pravog kontakta.</p>
+        </div>
+        <div className="jf-story-grid">
+          {["candidate1.jpg", "candidate2.jpg", "candidate3.jpg"].map((photo, i) => (
+            <article className="jf-story-card" key={photo}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={img(photo)} alt="Candidate portrait" />
+              <p>Platforma mi je pomogla da brzo dodjem do relevantnih oglasa i kontakata bez komplikacija.</p>
+              <strong>{["Marco Kihn", "Darlene Robertson", "Jenny Wilson"][i]}</strong>
+              <small>{["Hiring Manager", "Project Manager", "Talent Lead"][i]}</small>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="jf-cta">
+        <div>
+          <h2>Find Your Next Job from 5,000+ Openings</h2>
+          <p>Pretrazi oglase, napravi profil i budi vidljiv firmama koje zaposljavaju.</p>
+          <Link href="/oglasi">Find a job</Link>
+        </div>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img src={img("career1.webp")} alt="People working together in an office" />
+      </section>
+
+      <section className="jf-tips">
+        <div className="jf-section-title">
+          <h2>Little Career Tips That Help</h2>
+          <p>Kratki savjeti za bolju prijavu, CV i razgovor za posao.</p>
+        </div>
+        <div className="jf-tip-layout">
+          <article className="jf-tip-large">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={img("discover1.webp")} alt="Career discussion" />
+            <span>Recent Posts</span>
+            <h3>Kako da tvoja prijava izgleda profesionalno</h3>
+            <Link href="/oglasi">Read More</Link>
+          </article>
+          <div className="jf-tip-list">
+            {(popularTags.length ? popularTags.slice(0, 4) : [
+              { label: "CV", q: "CV" },
+              { label: "Razgovor", q: "Razgovor" },
+              { label: "Sezonski posao", q: "Sezonski posao" },
+              { label: "Brzi angazman", q: "Brzi angazman" },
+            ]).map((tip, i) => (
+              <Link href={`/oglasi?q=${encodeURIComponent(tip.q)}`} className="jf-tip-row" key={`${tip.q}-${i}`}>
+                <span>0{i + 1} Jan 2026</span>
+                <strong>{tip.label}</strong>
+                <small>Read More</small>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
