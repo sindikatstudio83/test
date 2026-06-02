@@ -60,6 +60,8 @@ export function MobileNav() {
 
   const navClass = ["mobile-app-nav", isIosSafari ? "ios-safari-nav" : ""].join(" ").trim();
 
+  if (role === "guest") return null;
+
   return (
     <nav className={navClass} aria-label="Mobilna navigacija">
       {items.map(item => {
