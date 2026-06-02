@@ -11,28 +11,29 @@ export const metadata: Metadata = {
 export default async function CompaniesPage() {
   const companies = await getCompanies();
   return (
-    <section className="nh-page">
-      <div className="nh-page-hero">
-        <span>Firme</span>
-        <h1>Poslodavci</h1>
-        <p>Pregled firmi koje imaju javni profil i aktivno zaposljavaju preko imaposla.me.</p>
+    <section className="nx-page">
+      <div className="page-banner">
+        <div className="pb-wrap">
+          <h1 className="pb-title">Top Firme</h1>
+          <div className="crumb"><span>Početna</span><span>/</span><span>Firme</span></div>
+        </div>
       </div>
 
       <div className="nh-container"><BannerSlot placement="company_pages_top" /></div>
 
-      <div className="nh-container nh-toolbar">
-        <div>
-          <span className="nh-small-label">Direktorijum firmi</span>
-          <h2>{companies.length} poslodavaca</h2>
+      <div className="nx-container nh-toolbar">
+        <div className="sec-head sec-head-dark" style={{ marginBottom: 24 }}>
+          <h2>{companies.length} <span>poslodavaca</span></h2>
+          <p>Direktorijum firmi koje imaju javni profil i aktivno zapošljavaju.</p>
         </div>
       </div>
 
       {companies.length ? (
-        <div className="nh-container nh-company-grid">
+        <div className="nx-container comp-grid" style={{ paddingBottom: 40 }}>
           {companies.map((c) => <CompanyCard company={c} key={c.id} />)}
         </div>
       ) : (
-        <div className="nh-container">
+        <div className="nx-container">
           <div className="nh-empty">
             <strong>Nema firmi</strong>
             <p>Firme se prikazuju nakon odobrenja.</p>

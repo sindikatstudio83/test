@@ -88,20 +88,22 @@ export default async function JobsPage({
   }
 
   return (
-    <>
-      {/* ── PAGE HEADER ── */}
-      <div className="jl-header">
-        <h1 className="jl-title">Oglasi za posao</h1>
+    <section className="nx-page">
+      <div className="page-banner">
+        <div className="pb-wrap">
+          <h1 className="pb-title">Lista Oglasa</h1>
+          <div className="crumb"><Link href="/">Početna</Link><span>/</span><span>Lista Oglasa</span></div>
+        </div>
       </div>
 
       <GuestJobsCta />
 
       <BannerSlot placement="jobs_list_top" />
 
-      <div className="jl-layout">
+      <div className="page-layout">
 
         {/* ══════════════ SIDEBAR ══════════════ */}
-        <aside className="jl-sidebar">
+        <aside className="sidebar">
 
           {/* Mobile: search form (shown above list on mobile) */}
           <form className="jl-mobile-search" method="get" action="/oglasi">
@@ -131,8 +133,7 @@ export default async function JobsPage({
           </form>
 
           {/* Desktop sidebar filter panel */}
-          <div className="jl-filter-panel">
-            <div className="jl-filter-title">Filter</div>
+          <div className="filter-box">
 
             {/* Search */}
             <form method="get" action="/oglasi" className="jl-sidebar-search">
@@ -152,7 +153,7 @@ export default async function JobsPage({
 
             {/* By City */}
             <div className="jl-filter-group">
-              <div className="jl-filter-group-label">Po gradu</div>
+              <h4>Lokacija</h4>
               {lookups.cities
                 .filter((c: LookupItem) => (cityCounts[c.name] || 0) > 0)
                 .sort((a: LookupItem, b: LookupItem) => (cityCounts[b.name] || 0) - (cityCounts[a.name] || 0))
@@ -172,7 +173,7 @@ export default async function JobsPage({
 
             {/* By Category */}
             <div className="jl-filter-group">
-              <div className="jl-filter-group-label">Po kategoriji</div>
+              <h4>Kategorija</h4>
               {lookups.categories
                 .filter((c: LookupItem) => (catCounts[c.name] || 0) > 0)
                 .sort((a: LookupItem, b: LookupItem) => (catCounts[b.name] || 0) - (catCounts[a.name] || 0))
@@ -193,11 +194,14 @@ export default async function JobsPage({
         </aside>
 
         {/* ══════════════ MAIN LISTA ══════════════ */}
-        <main className="jl-main">
+        <main>
 
           {/* Count + reset */}
-          <div className="jl-main-head">
-            <span className="jl-count">{jobs.length} {jobs.length === 1 ? "oglas" : "oglasa"}</span>
+          <div className="results-bar">
+            <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
+              <button className="filter-pill" type="button">Filteri</button>
+              <span>Prikazano {jobs.length} {jobs.length === 1 ? "oglas" : "oglasa"}</span>
+            </div>
             <div className="jl-main-actions">
               {isFiltering && (
                 <Link href="/oglasi" className="jl-reset">
@@ -243,7 +247,7 @@ export default async function JobsPage({
             <div className={view === "grid" ? "jl-grid" : "jl-list"}>
               {jobs.map((job: Job, idx: number) => (
                 <React.Fragment key={job.id}>
-                  {view === "grid" ? <JobCardClean job={job} /> : <JobRow job={job} />}
+                  <JobCardClean job={job} />
                   {(idx + 1) % 15 === 0 && idx < jobs.length - 1 && (
                     <div className="jl-banner-slot">
                       <BannerSlot placement="jobs_list_middle" />
@@ -258,7 +262,7 @@ export default async function JobsPage({
       </div>
 
       <BannerSlot placement="jobs_list_bottom" />
-    </>
+    </section>
   );
 }
 
