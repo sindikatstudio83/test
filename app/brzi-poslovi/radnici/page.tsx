@@ -15,11 +15,12 @@ export const metadata: Metadata = {
 export const revalidate = 120;
 
 type Props = {
-  searchParams: Promise<{ profession?: string; city?: string; availability?: string }>;
+  searchParams: Promise<{ profession?: string; city?: string; availability?: string; view?: string }>;
 };
 
 export default async function RadniciPage({ searchParams }: Props) {
   const params = await searchParams;
+  const view = params.view === "list" ? "list" : "grid";
   const [workers, professions] = await Promise.all([
     getPublicWorkers({
       profession: params.profession,
@@ -31,6 +32,24 @@ export default async function RadniciPage({ searchParams }: Props) {
   ]);
 
   const activeProf = professions.find((p) => p.slug === params.profession);
+  function viewUrl(nextView: "grid" | "list") {
+    const p = new URLSearchParams();
+    if (params.profession) p.set("profession", params.profession);
+    if (params.city) p.set("city", params.city);
+    if (params.availability) p.set("availability", params.availability);
+    if (nextView === "list") p.set("view", "list");
+    const s = p.toString();
+    return s ? `/brzi-poslovi/radnici?${s}` : "/brzi-poslovi/radnici";
+  }
+  function professionUrl(slug?: string) {
+    const p = new URLSearchParams();
+    if (slug) p.set("profession", slug);
+    if (params.city) p.set("city", params.city);
+    if (params.availability) p.set("availability", params.availability);
+    if (view === "list") p.set("view", "list");
+    const s = p.toString();
+    return s ? `/brzi-poslovi/radnici?${s}` : "/brzi-poslovi/radnici";
+  }
 
   return (
     <>
@@ -47,13 +66,13 @@ export default async function RadniciPage({ searchParams }: Props) {
 
       {/* Profession chips */}
       <div className="bp-professions" aria-label="Filtriraj po zanimanju">
-        <Link href="/brzi-poslovi/radnici" className={`bp-prof-chip${!params.profession ? " active" : ""}`}>
+        <Link href={professionUrl()} className={`bp-prof-chip${!params.profession ? " active" : ""}`}>
           Sve
         </Link>
         {professions.map((p) => (
           <Link
             key={p.id}
-            href={`/brzi-poslovi/radnici?profession=${p.slug}`}
+            href={professionUrl(p.slug)}
             className={`bp-prof-chip${params.profession === p.slug ? " active" : ""}`}
           >
             {p.icon && <span className="bp-prof-chip__icon" aria-hidden>{p.icon}</span>}
@@ -65,6 +84,7 @@ export default async function RadniciPage({ searchParams }: Props) {
       {/* Availability filter */}
       <form className="bp-filters" method="get" action="/brzi-poslovi/radnici">
         {params.profession && <input type="hidden" name="profession" value={params.profession} />}
+        {view === "list" && <input type="hidden" name="view" value="list" />}
         <input className="field" name="city" placeholder="Grad (npr. Podgorica)" defaultValue={params.city || ""} aria-label="Grad" />
         <select className="select" name="availability" defaultValue={params.availability || ""} aria-label="Dostupnost">
           <option value="">Sva dostupnost</option>
@@ -77,8 +97,16 @@ export default async function RadniciPage({ searchParams }: Props) {
 
       <BannerSlot placement="jobs_list_middle" />
 
+      <div className="bp-results-head">
+        <span className="jl-count">{workers.length} {workers.length === 1 ? "kandidat" : "kandidata"}</span>
+        <div className="view-toggle" aria-label="Prikaz kandidata">
+          <Link className={`view-toggle__btn${view === "grid" ? " active" : ""}`} href={viewUrl("grid")}>Grid</Link>
+          <Link className={`view-toggle__btn${view === "list" ? " active" : ""}`} href={viewUrl("list")}>Lista</Link>
+        </div>
+      </div>
+
       {workers.length > 0 ? (
-        <div className="bp-worker-grid">
+        <div className={view === "list" ? "bp-worker-list" : "bp-worker-grid"}>
           {workers.map((w) => <WorkerCard key={w.id} worker={w} />)}
         </div>
       ) : (

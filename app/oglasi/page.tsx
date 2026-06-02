@@ -4,6 +4,7 @@ import React from "react";
 import { Avatar } from "@/components/avatar";
 import { BannerSlot } from "@/components/banner-slot";
 import { GuestJobsCta } from "@/components/guest-jobs-cta";
+import { JobCardClean } from "@/components/job-card-clean";
 import { getLookups, getPublicJobs } from "@/lib/queries/public";
 import { jobUrl, formatDate } from "@/lib/format";
 import type { Job, LookupItem } from "@/types/domain";
@@ -26,9 +27,10 @@ function daysLeft(deadline: string | null): string | null {
 export default async function JobsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; city?: string; category?: string; employer?: string }>;
+  searchParams: Promise<{ q?: string; city?: string; category?: string; employer?: string; view?: string }>;
 }) {
   const params = await searchParams;
+  const view = params.view === "grid" ? "grid" : "list";
 
   const [jobs, lookups] = await Promise.all([
     getPublicJobs({
@@ -62,6 +64,7 @@ export default async function JobsPage({
     if (params.q) p.set("q", params.q);
     if (params.city) p.set("city", params.city);
     if (params.category) p.set("category", params.category);
+    if (view === "grid") p.set("view", "grid");
     p.set(key, val);
     return `/oglasi?${p.toString()}`;
   }
@@ -70,6 +73,16 @@ export default async function JobsPage({
     if (params.q && key !== "q") p.set("q", params.q);
     if (params.city && key !== "city") p.set("city", params.city);
     if (params.category && key !== "category") p.set("category", params.category);
+    if (view === "grid") p.set("view", "grid");
+    const s = p.toString();
+    return s ? `/oglasi?${s}` : "/oglasi";
+  }
+  function viewUrl(nextView: "list" | "grid") {
+    const p = new URLSearchParams();
+    if (params.q) p.set("q", params.q);
+    if (params.city) p.set("city", params.city);
+    if (params.category) p.set("category", params.category);
+    if (nextView === "grid") p.set("view", "grid");
     const s = p.toString();
     return s ? `/oglasi?${s}` : "/oglasi";
   }
@@ -185,11 +198,17 @@ export default async function JobsPage({
           {/* Count + reset */}
           <div className="jl-main-head">
             <span className="jl-count">{jobs.length} {jobs.length === 1 ? "oglas" : "oglasa"}</span>
-            {isFiltering && (
-              <Link href="/oglasi" className="jl-reset">
-                ↺ Poništi pretragu
-              </Link>
-            )}
+            <div className="jl-main-actions">
+              {isFiltering && (
+                <Link href="/oglasi" className="jl-reset">
+                  ↺ Poništi pretragu
+                </Link>
+              )}
+              <div className="view-toggle" aria-label="Prikaz oglasa">
+                <Link className={`view-toggle__btn${view === "list" ? " active" : ""}`} href={viewUrl("list")}>Lista</Link>
+                <Link className={`view-toggle__btn${view === "grid" ? " active" : ""}`} href={viewUrl("grid")}>Grid</Link>
+              </div>
+            </div>
           </div>
 
           {/* Active filter tags */}
@@ -221,10 +240,10 @@ export default async function JobsPage({
               <Link href="/oglasi" className="btn red sm" style={{ marginTop: 12 }}>Poništi pretragu</Link>
             </div>
           ) : (
-            <div className="jl-list">
+            <div className={view === "grid" ? "jl-grid" : "jl-list"}>
               {jobs.map((job: Job, idx: number) => (
                 <React.Fragment key={job.id}>
-                  <JobRow job={job} />
+                  {view === "grid" ? <JobCardClean job={job} /> : <JobRow job={job} />}
                   {(idx + 1) % 15 === 0 && idx < jobs.length - 1 && (
                     <div className="jl-banner-slot">
                       <BannerSlot placement="jobs_list_middle" />
