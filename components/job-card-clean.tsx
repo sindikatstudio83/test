@@ -25,35 +25,42 @@ export function JobCardClean({ job }: { job: CardJob }) {
     : desc;
 
   return (
-    <article className="job-card job-card-clean">
-      <div className="job-card-clean__logo">
+    <article className="jlist-item nx-job-card">
+      <Link className="jlist-thumb nx-job-thumb" href={url} aria-label={job.title}>
         <Avatar
           bucket="company-logos"
           path={co?.logo_path ?? null}
           fallback={co?.name ?? ""}
-          size={52}
+          size={64}
           shape="rounded"
         />
-      </div>
+      </Link>
 
-      <div className="job-card-clean__main">
-        <div className="job-card-clean__top">
-          <span className="job-card-clean__company">{co?.name || "Poslodavac"}</span>
+      <div className="jlist-body">
+        <div className="jlist-top">
+          <div>
+            <Link className="jlist-title" href={url}>{job.title}</Link>
+            <div className="jlist-exp">{co?.name || "Poslodavac"}</div>
+          </div>
+          <span className="jlist-ago">Rok {formatDate(job.deadline)}</span>
         </div>
-        <Link className="job-title" href={url}>{job.title}</Link>
-        <div className="job-card-clean__meta">
-          {meta.map((m, i) => <span key={i}>{m}</span>)}
+        <div className="jlist-meta">
+          {job.cities?.name && <span>Lokacija: {job.cities.name}</span>}
+          {job.salary_text && <span>Plata: {job.salary_text}</span>}
+          {job.categories?.name && <span>{job.categories.name}</span>}
+        </div>
+        <div className="jcard-tags">
+          {job.featured && <span className="jtag jtag-red">Istaknuto</span>}
+          {job.contract_type && <span className="jtag jtag-green">{job.contract_type}</span>}
+          {meta.filter((m) => m !== job.contract_type).slice(0, 2).map((m, i) => <span className="jtag jtag-gray" key={i}>{m}</span>)}
         </div>
         {descTruncated && (
-          <p className="job-desc">{descTruncated}</p>
+          <p className="jlist-desc">{descTruncated}</p>
         )}
       </div>
 
-      <div className="job-actions job-card-clean__actions">
-        <div className="deadline">
-          Rok prijave <strong>{formatDate(job.deadline)}</strong>
-        </div>
-        <Link className="btn blue sm" href={url}>Detalji i prijava</Link>
+      <div className="jlist-right">
+        <Link className="btn-details" href={url}>Detalji</Link>
         <SaveJobButton jobId={job.id} size="sm" />
       </div>
     </article>

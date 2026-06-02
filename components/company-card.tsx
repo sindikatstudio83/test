@@ -6,19 +6,20 @@ import type { Company } from "@/types/domain";
 export function CompanyCard({ company }: { company: Company }) {
   const url = companyUrl(company);
   return (
-    <article className="nh-company-card">
-      <div className="nh-company-logo">
-        <Avatar bucket="company-logos" path={company.logo_path} fallback={company.name} size={96} shape="rounded" />
-      </div>
+    <article className="comp-card nx-company-card">
+      <Link className="comp-logo-circle nx-company-logo" href={url} aria-label={company.name}>
+        <div className="comp-dot" />
+        <Avatar bucket="company-logos" path={company.logo_path} fallback={company.name} size={76} shape="rounded" />
+      </Link>
       <div className="nh-company-body">
-        <h3><Link href={url}>{company.name}</Link></h3>
-        <div className="nh-card-meta">
+        <h3 className="comp-name"><Link href={url}>{company.name}</Link></h3>
+        <div className="jlist-meta nx-company-meta">
           {company.city && <span>{company.city}</span>}
           {company.industry && <span>{company.industry}</span>}
         </div>
-        {company.description && <p>{company.description}</p>}
+        {company.description && <p className="comp-desc">{company.description}</p>}
       </div>
-      <Link className="nh-outline-btn nh-card-btn" href={url}>Profil firme</Link>
+      <Link className="open-pill" href={url}>Profil firme</Link>
     </article>
   );
 }
