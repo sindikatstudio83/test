@@ -156,7 +156,7 @@ export default async function HomePage() {
       </section>
 
       {/* ── CTA PATHS ── */}
-      <div className="live-paths live-paths--three">
+      <div className="live-paths live-paths--three home-paths-final">
         <Link className="live-path" href="/oglasi">
           <span>Tražim posao</span>
           <h2>Tražim posao</h2>
