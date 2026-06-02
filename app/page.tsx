@@ -11,7 +11,7 @@ import type { JobWithPromotion } from "@/types/domain";
 
 export const metadata: Metadata = {
   title: "imaposla.me - Poslovi u Crnoj Gori",
-  description: "Pronađi posao ili objavi oglas u Crnoj Gori. Kandidati, firme i oglasi na jednom mjestu.",
+  description: "Pronadji posao ili objavi oglas u Crnoj Gori. Kandidati, firme i oglasi na jednom mjestu.",
 };
 
 export const revalidate = 300;
@@ -27,157 +27,134 @@ export default async function HomePage() {
   const { paidTopJobs, featuredJobs, regularJobs, recommendedCompanies } = homepageData;
   const fallbackCompaniesRaw = recommendedCompanies.length === 0 ? await getCompanies(8) : [];
   const fallbackCompanies = fallbackCompaniesRaw as unknown as typeof recommendedCompanies;
-
   const allJobs: JobWithPromotion[] = [...paidTopJobs, ...featuredJobs, ...regularJobs];
   const displayCompanies = recommendedCompanies.length > 0 ? recommendedCompanies : fallbackCompanies;
 
   return (
-    <section className="live-home home-redesign">
+    <section className="nh-home">
+      <div className="nh-creative-hero">
+        <div className="nh-container nh-hero-grid">
+          <div className="nh-hero-copy">
+            <span className="nh-pill">Pravi ljudi. Prave prilike.</span>
+            <h1>Pronadji posao ili zaposli prave ljude.</h1>
+            <p>Kandidati brzo dolaze do relevantnih oglasa. Poslodavci objavljuju posao, dobijaju prijave i vode selekciju na jednom mjestu.</p>
+            <form className="nh-hero-search" action="/oglasi">
+              <input name="q" placeholder="Naziv posla, firma ili vjestina" aria-label="Pretraga" />
+              <select name="city" aria-label="Grad">
+                <option value="">Svi gradovi</option>
+                {lookups.cities.map((c) => <option key={c.id} value={c.name}>{c.name}</option>)}
+              </select>
+              <button type="submit">Pretrazi</button>
+            </form>
+            <div className="nh-tags">
+              <span>Popularno</span>
+              {popularTags.slice(0, 5).map((p) => (
+                <Link key={p.q} href={`/oglasi?q=${encodeURIComponent(p.q)}`}>{p.label}</Link>
+              ))}
+            </div>
+          </div>
 
-      {/* ── HERO ── */}
-      <div className="live-hero home-hero-redesign">
-        <span className="page-label">Pravi ljudi. Prave prilike.</span>
-        <h1>Pronađi posao ili zaposli prave ljude.</h1>
-        <p>
-          Kandidati brzo dolaze do relevantnih oglasa. Poslodavci objavljuju posao,
-          dobijaju prijave i vode selekciju na jednom mjestu.
-        </p>
-
-        {/* Intent switch — tri ravnopravne namjere */}
-        <div className="home-intent-switch home-intent-switch--three" aria-label="Izaberi šta želiš da uradiš">
-          <Link href="/oglasi" className="home-intent-card home-intent-card--candidate">
-            <span>Tražim posao</span>
-            <strong>Pretraži oglase, napravi biografiju i prati prijave.</strong>
-          </Link>
-          <Link href="/registracija?role=candidate&intent=worker" className="home-intent-card home-intent-card--worker">
-            <span>Nudim brze usluge</span>
-            <strong>Konobar, moler, hostesa, šanker, pomoćni radnik? Napravi profil da te firme mogu kontaktirati.</strong>
-          </Link>
-          <Link href="/registracija?role=company" className="home-intent-card home-intent-card--employer">
-            <span>Zapošljavam</span>
-            <strong>Objavi oglas ili pronađi radnika za kratak angažman.</strong>
-          </Link>
-        </div>
-
-        {/* Search */}
-        <form className="live-search home-main-search" action="/oglasi">
-          <input
-            placeholder="Naziv posla, firma ili vještina"
-            aria-label="Naziv posla, firma ili vještina"
-            name="q"
-          />
-          <select name="city" aria-label="Grad">
-            <option value="">Svi gradovi</option>
-            {lookups.cities.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
-          </select>
-          <select name="category" aria-label="Kategorija">
-            <option value="">Sve kategorije</option>
-            {lookups.categories.map(c => <option key={c.id} value={c.name}>{c.name}</option>)}
-          </select>
-          <button type="submit">Pretraži</button>
-        </form>
-
-        {/* Popular tags */}
-        <div className="quick-tags">
-          <span className="quick-tags__label">Popularno:</span>
-          {popularTags.map(p => (
-            <Link key={p.q} href={`/oglasi?q=${encodeURIComponent(p.q)}`} className="quick-tag">
-              {p.label}
-            </Link>
-          ))}
+          <div className="nh-hero-art" aria-hidden="true">
+            <div className="nh-hero-card nh-hero-card--top">
+              <strong>{allJobs.length || "100+"}</strong>
+              <span>aktivnih oglasa</span>
+            </div>
+            <div className="nh-hero-person"><span>imaposla.me</span></div>
+            <div className="nh-hero-card nh-hero-card--bottom">
+              <strong>{displayCompanies.length || "50+"}</strong>
+              <span>firmi i klijenata</span>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* ── BRZI POSLOVI PROMO ── */}
-      <Link href="/brzi-poslovi" className="bp-promo">
-        <div className="bp-promo__icon" aria-hidden>⚡</div>
-        <div className="bp-promo__text">
-          <strong>Brzi poslovi — angažuj odmah</strong>
-          <span>Konobari, moleri, hostese i pomoćni radnici dostupni za kratke angažmane.</span>
+      <Link href="/brzi-poslovi" className="nh-container nh-service-strip">
+        <div className="nh-service-icon" aria-hidden>!</div>
+        <div>
+          <strong>Brzi poslovi - angazuj odmah</strong>
+          <span>Konobari, moleri, hostese i pomocni radnici dostupni za kratke angazmane.</span>
         </div>
-        <span className="bp-promo__arrow" aria-hidden>→</span>
+        <b>Otvori</b>
       </Link>
 
-      {/* ── PREMIUM POSLODAVCI ── */}
       {displayCompanies.length > 0 && (
-        <section className="premium-employers-section" aria-labelledby="premium-employers-title">
-          <div className="live-section-head">
+        <section className="nh-section">
+          <div className="nh-container nh-section-head">
             <div>
-              <span className="kicker">Premium sekcija</span>
-              <h2 id="premium-employers-title">Istaknuti poslodavci</h2>
-              <p>Firme koje aktivno traže ljude i imaju javne profile na platformi.</p>
+              <span className="nh-pill">Premium sekcija</span>
+              <h2>Istaknuti poslodavci</h2>
+              <p>Firme koje aktivno traze ljude i imaju javne profile na platformi.</p>
             </div>
-            <Link className="btn ghost sm" href="/firme">Svi poslodavci</Link>
+            <Link className="nh-outline-btn" href="/firme">Svi poslodavci</Link>
           </div>
-          <PremiumEmployers companies={displayCompanies} />
+          <div className="nh-container">
+            <PremiumEmployers companies={displayCompanies} />
+          </div>
         </section>
       )}
 
-      {/* ── HERO CAROUSEL ── */}
       {heroBanners.length > 0 && (
-        <HeroBannerCarousel banners={heroBanners} autoPlayMs={6000} />
+        <div className="nh-container"><HeroBannerCarousel banners={heroBanners} autoPlayMs={6000} /></div>
       )}
 
-      <BannerSlot placement="homepage_top" />
+      <div className="nh-container"><BannerSlot placement="homepage_top" /></div>
 
-      {/* ── NAJNOVIJI OGLASI ── */}
-      <section>
-        <div className="live-section-head">
+      <section className="nh-section">
+        <div className="nh-container nh-section-head">
           <div>
-            <span className="kicker">Aktivno</span>
+            <span className="nh-pill">Aktivno</span>
             <h2>Najnoviji oglasi</h2>
             <p>Prikazuju se samo oglasi koji su odobreni i aktivni.</p>
           </div>
-          <Link className="btn ghost sm" href="/oglasi">Svi oglasi</Link>
+          <Link className="nh-outline-btn" href="/oglasi">Svi oglasi</Link>
         </div>
 
-        <div className="job-list two-col">
-          {allJobs.slice(0, 8).map((job: JobWithPromotion) => (
-            <JobCardClean key={job.id} job={job} />
-          ))}
+        <div className="nh-container nh-job-grid">
+          {allJobs.slice(0, 8).map((job) => <JobCardClean key={job.id} job={job} />)}
         </div>
 
         {allJobs.length === 0 && (
-          <div className="notice-card" style={{ textAlign: "center", padding: 32 }}>
-            <strong>Trenutno nema aktivnih oglasa</strong>
-            <p>Novi oglasi se objavljuju svakodnevno. Registruj se i prati novosti.</p>
-            <div className="actions" style={{ justifyContent: "center", marginTop: 12 }}>
-              <Button href="/registracija" tone="blue">Registruj se →</Button>
-              <Button href="/oglasi">Pretraži oglase</Button>
+          <div className="nh-container">
+            <div className="nh-empty">
+              <strong>Trenutno nema aktivnih oglasa</strong>
+              <p>Novi oglasi se objavljuju svakodnevno. Registruj se i prati novosti.</p>
+              <div className="actions">
+                <Button href="/registracija" tone="blue">Registruj se</Button>
+                <Button href="/oglasi">Pretrazi oglase</Button>
+              </div>
             </div>
           </div>
         )}
 
         {allJobs.length > 0 && (
-          <div className="home-more-jobs">
+          <div className="nh-more">
             <Button href="/oglasi" tone="blue">Pogledaj sve oglase</Button>
           </div>
         )}
       </section>
 
-      {/* ── CTA PATHS ── */}
-      <div className="live-paths live-paths--three home-paths-final">
-        <Link className="live-path" href="/oglasi">
-          <span>Tražim posao</span>
-          <h2>Tražim posao</h2>
-          <p>Otvori oglas, pročitaj uslove, dopuni biografiju i pošalji prijavu bez komplikacija.</p>
-          <strong>Otvori oglase →</strong>
+      <div className="nh-container nh-intent-grid">
+        <Link className="nh-intent-card" href="/oglasi">
+          <span>Trazim posao</span>
+          <h2>Trazim posao</h2>
+          <p>Otvori oglas, procitaj uslove, dopuni biografiju i posalji prijavu bez komplikacija.</p>
+          <strong>Otvori oglase</strong>
         </Link>
-        <Link className="live-path" href="/registracija?role=candidate&intent=worker">
+        <Link className="nh-intent-card" href="/registracija?role=candidate&intent=worker">
           <span>Brze usluge</span>
           <h2>Nudim brze usluge</h2>
-          <p>Napravi profil sa svojim uslugama (konobar, moler, hostesa…) da te firme i ljudi kontaktiraju za kratke angažmane.</p>
-          <strong>Napravi profil →</strong>
+          <p>Napravi profil sa svojim uslugama da te firme i ljudi kontaktiraju za kratke angazmane.</p>
+          <strong>Napravi profil</strong>
         </Link>
-        <Link className="live-path" href="/registracija?role=company">
+        <Link className="nh-intent-card" href="/registracija?role=company">
           <span>Firma</span>
-          <h2>Zapošljavam</h2>
-          <p>Objavi oglas ili pronađi radnika za kratak angažman i vodi kandidate kroz selekciju.</p>
-          <strong>Kreni kao firma →</strong>
+          <h2>Zaposljavam</h2>
+          <p>Objavi oglas ili pronadji radnika za kratak angazman i vodi kandidate kroz selekciju.</p>
+          <strong>Kreni kao firma</strong>
         </Link>
       </div>
 
-      <BannerSlot placement="homepage_bottom" />
+      <div className="nh-container"><BannerSlot placement="homepage_bottom" /></div>
     </section>
   );
 }

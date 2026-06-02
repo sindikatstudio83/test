@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Avatar } from "@/components/avatar";
 import { JobCardClean } from "@/components/job-card-clean";
-import { Badge, Button, EmptyState, SectionHead } from "@/components/ui";
 import { BannerSlot } from "@/components/banner-slot";
 import { parseIdFromSlug } from "@/lib/format";
 import { getCompanyById, getPublicJobsByCompany } from "@/lib/queries/public";
@@ -11,33 +12,11 @@ type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const id = parseIdFromSlug(slug);
-  if (!id) return { title: "Firma nije pronađena" };
+  if (!id) return { title: "Firma nije pronadjena" };
   const company = await getCompanyById(id);
-  if (!company) return { title: "Firma nije pronađena" };
-
+  if (!company) return { title: "Firma nije pronadjena" };
   const description = company.description?.slice(0, 160) || `Profil firme ${company.name} na imaposla.me.`;
-
-  return {
-    title: company.name,
-    description,
-    openGraph: {
-      title: company.name,
-      description,
-      images: [
-        {
-          url: `/og-image?title=${encodeURIComponent(company.name)}&subtitle=${encodeURIComponent(company.city || "Crna Gora")}`,
-          width: 1200,
-          height: 630,
-          alt: company.name
-        }
-      ]
-    },
-    twitter: {
-      card: "summary_large_image",
-      title: company.name,
-      description
-    }
-  };
+  return { title: company.name, description };
 }
 
 export default async function CompanyDetailPage({ params }: Props) {
@@ -48,24 +27,50 @@ export default async function CompanyDetailPage({ params }: Props) {
   if (!company) return notFound();
 
   return (
-    <>
-      <BannerSlot placement="company_pages_top" />
-      <Button href="/firme" size="sm">Nazad na firme</Button>
-      <div className="panel with-top-space">
-        <span className="eyebrow">Profil firme</span>
-        <h1>{company.name}</h1>
-        <p className="lead">{company.description || "Profil poslodavca."}</p>
-        <div className="tags">
-          <Badge tone="lime">{company.city || "Crna Gora"}</Badge>
-          <Badge>{company.industry || "Poslodavac"}</Badge>
+    <section className="nh-page">
+      <div className="nh-company-hero">
+        <div className="nh-container nh-company-hero-grid">
+          <div className="nh-company-hero-logo">
+            <Avatar bucket="company-logos" path={company.logo_path} fallback={company.name} size={156} shape="rounded" />
+          </div>
+          <div>
+            <Link className="nh-back" href="/firme">Nazad na firme</Link>
+            <span className="nh-pill">Profil firme</span>
+            <h1>{company.name}</h1>
+            <p>{company.description || "Profil poslodavca."}</p>
+            <div className="nh-chip-row">
+              <span className="nh-chip">{company.city || "Crna Gora"}</span>
+              <span className="nh-chip">{company.industry || "Poslodavac"}</span>
+              <span className="nh-chip nh-chip-red">{companyJobs.length} aktivnih oglasa</span>
+            </div>
+          </div>
         </div>
       </div>
-      <SectionHead title="Aktivni oglasi" text="Svi javni oglasi ovog poslodavca." />
-      <div className="job-list">
-        {companyJobs.map((job) => <JobCardClean job={job} key={job.id} />)}
-        {!companyJobs.length ? <EmptyState title="Nema aktivnih oglasa" text="Ova firma trenutno nema javno aktivnih oglasa." /> : null}
+
+      <div className="nh-container"><BannerSlot placement="company_pages_top" /></div>
+
+      <div className="nh-container nh-section-head">
+        <div>
+          <span className="nh-small-label">Otvorene pozicije</span>
+          <h2>Aktivni oglasi</h2>
+          <p>Svi javni oglasi ovog poslodavca.</p>
+        </div>
       </div>
-      <BannerSlot placement="company_pages_bottom" />
-    </>
+
+      {companyJobs.length ? (
+        <div className="nh-container nh-job-grid">
+          {companyJobs.map((job) => <JobCardClean job={job} key={job.id} />)}
+        </div>
+      ) : (
+        <div className="nh-container">
+          <div className="nh-empty">
+            <strong>Nema aktivnih oglasa</strong>
+            <p>Ova firma trenutno nema javno aktivnih oglasa.</p>
+          </div>
+        </div>
+      )}
+
+      <div className="nh-container"><BannerSlot placement="company_pages_bottom" /></div>
+    </section>
   );
 }

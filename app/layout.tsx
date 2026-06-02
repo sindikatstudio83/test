@@ -86,7 +86,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       <body>
         <AuthProvider>
           <Header />
-          <main className="wrap app">{children}</main>
+          <main className="site-shell">{children}</main>
           <MobileNav />
           <Footer />
         </AuthProvider>
