@@ -21,8 +21,9 @@ export function Avatar({
   const dim = `${size}px`;
   const fallbackText = initials(fallback) || "?";
   const showFallback = !url || imgError;
-
-  const fallbackClass = showFallback ? ` avatar-image--fallback avatar-image--${bucket === "worker-photos" ? "person" : "company"}` : "";
+  const fallbackClass = showFallback
+    ? ` avatar-image--fallback avatar-image--${bucket === "worker-photos" ? "person" : "company"}`
+    : "";
 
   return (
     <div

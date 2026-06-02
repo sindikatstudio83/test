@@ -86,6 +86,7 @@ export async function BannerSlot({
         className="ad-banner-link ad-banner-mock-art"
         tabIndex={-1}
         aria-hidden="true"
+        style={{ minHeight: mock.height }}
       />
       <div className="ad-placeholder-label">
         <span className="ad-placeholder-text">Vaš banner ovdje</span>
